@@ -5,11 +5,12 @@ from rich.console import Console
 from rich.panel import Panel
 import json
 from rich.syntax import Syntax
+from bs4 import BeautifulSoup
 
 console = Console()
 
 ping = lambda x: system(f"ping {x}")
-clear = lambda: console.clear()
+clear = lambda: system('cls')
 ENTER_URL_TEXT = "Enter the URL: "
 
 print("loading cookies in file cookies.json and params in params.json")
@@ -20,7 +21,7 @@ def clear_and_show_logo_and_choices():
     clear()
     console.print("[red]" + text2art("InterFuncs"))
     
-    console.print(Panel.fit("1. exit\n2. ping\n3. get site status code\n4. get text (html or json) on site\n5. get is ok on site "))
+    console.print(Panel.fit("1. exit\n2. ping\n3. get site status code\n4. get text (html or json) on site\n5. get is ok on site"))
 
 def handle_ping():
     ip = input("Enter the IP address: ")
@@ -34,17 +35,28 @@ def handle_get_status_code():
 def handle_get_text():
     url = input(ENTER_URL_TEXT)
     response = get(url, cookies=cookies, params=params)
-    with open("text.txt", 'w', encoding='utf-8') as f:
-        f.write(response.text)
-    print("text saved in text.txt")
     content_type = response.headers.get('Content-Type', '')
     if 'html' in content_type:
         lang = "html"
+        soup = BeautifulSoup(response.text, 'html.parser')
+        formatted_html = soup.prettify()
+        console.print(Syntax(formatted_html, lang))
+        with open("index.html", 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        print("text saved in index.html")
     elif 'json' in content_type:
         lang = "json"
+        formatted_json = json.dumps(json.loads(response.text), indent=4)
+        console.print(Syntax(formatted_json, lang))
+        with open("response.json", 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        print("text saved in response.json")
     else:
+        with open("text.txt", 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        print("text saved in text.txt")
         lang = "text"
-    console.print(Syntax(response.text, lang))
+        console.print(Syntax(response.text, lang))
 
 def handle_get_is_ok():
     url = input(ENTER_URL_TEXT)
