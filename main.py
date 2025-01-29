@@ -20,7 +20,7 @@ def clear_and_show_logo_and_choices():
     clear()
     console.print("[red]" + text2art("InterFuncs"))
     
-    console.print(Panel.fit("1. exit\n2. ping\n3. get site status code\n4. get site text (html or json)\n5. get site is ok\n6. get site headers\n7. get site json\n8. check site availability\n9. get site content"))
+    console.print(Panel.fit("1. exit\n2. ping\n3. get site status code\n4. get site text (html or json)\n5. get site is ok\n6. get site headers\n7. get site json\n8. check site availability\n9. get site content\n10. reset params\n11. reset cookies\n12. set params\n13. set cookies"))
 
 def handle_ping():
     ip = input("Enter the IP address: ")
@@ -82,6 +82,28 @@ def handle_get_content():
         f.write(response.content)
     print("content saved in text.txt")
 
+def handle_reset_params():
+    with open("params.json", 'w') as f:
+        f.write("{ }")
+    print("params reseted")
+
+def handle_reset_cookies():
+    with open("cookies.json", 'w') as f:
+        f.write("{ }")
+    print("cookies reseted")
+
+def set_params():
+    text_json = input("Enter the json: ")
+    with open("params.json", 'w') as f:
+        f.write(text_json)
+    print("params seted")
+
+def set_cookies():
+    text_json = input("Enter the json: ")
+    with open("cookies.json", 'w') as f:
+        f.write(text_json)
+    print("cookies seted")
+
 def main():
     while True:
         clear_and_show_logo_and_choices()
@@ -105,6 +127,16 @@ def main():
                 handle_check_site_availability()
             elif cmd == "9":
                 handle_get_content()
+            elif cmd == "10":
+                handle_reset_params()
+            elif cmd == "11":
+                handle_reset_cookies()
+            elif cmd == "12":
+                set_params()
+            elif cmd == "13":
+                set_cookies()
+            else:
+                console.print("[red]Error: Invalid command")
             print("Press enter to continue...")
             input()
         except Exception as e:
