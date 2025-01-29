@@ -11,16 +11,35 @@ console = Console()
 ping = lambda x: os.system(f"ping {x}")
 clear = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 ENTER_URL_TEXT = "Enter the URL: "
+COOKIES_FILE = "cookies.json"
+PARAMS_FILE = "params.json"
 
 print("loading cookies in file cookies.json and params in params.json")
-cookies = json.load(open("cookies.json"))
-params = json.load(open("params.json"))
+cookies = json.load(open(COOKIES_FILE))
+params = json.load(open(PARAMS_FILE))
 
 def clear_and_show_logo_and_choices():
     clear()
     console.print("[red]" + text2art("InterFuncs"))
     
-    console.print(Panel.fit("1. exit\n2. ping\n3. get site status code\n4. get site text (html or json)\n5. get site is ok\n6. get site headers\n7. get site json\n8. check site availability\n9. get site content\n10. reset params\n11. reset cookies\n12. set params\n13. set cookies"))
+    choices = {
+        "1": "Exit",
+        "2": "Ping",
+        "3": "Get site status code",
+        "4": "Get site text (html or json)",
+        "5": "Get site is ok",
+        "6": "Get site headers",
+        "7": "Get site json",
+        "8": "Check site availability",
+        "9": "Get site content",
+        "10": "Reset params",
+        "11": "Reset cookies",
+        "12": "Set params",
+        "13": "Set cookies"
+    }
+    
+    menu = "\n".join([f"{key}. {value}" for key, value in choices.items()])
+    console.print(Panel.fit(menu, title="Menu", width=console.width))
 
 def handle_ping():
     ip = input("Enter the IP address: ")
@@ -83,24 +102,24 @@ def handle_get_content():
     print("content saved in text.txt")
 
 def handle_reset_params():
-    with open("params.json", 'w') as f:
+    with open(PARAMS_FILE, 'w') as f:
         f.write("{ }")
     print("params reseted")
 
 def handle_reset_cookies():
-    with open("cookies.json", 'w') as f:
+    with open(COOKIES_FILE, 'w') as f:
         f.write("{ }")
     print("cookies reseted")
 
 def set_params():
     text_json = input("Enter the json: ")
-    with open("params.json", 'w') as f:
+    with open(PARAMS_FILE, 'w') as f:
         f.write(text_json)
     print("params seted")
 
 def set_cookies():
     text_json = input("Enter the json: ")
-    with open("cookies.json", 'w') as f:
+    with open(COOKIES_FILE, 'w') as f:
         f.write(text_json)
     print("cookies seted")
 
