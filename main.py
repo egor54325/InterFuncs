@@ -97,9 +97,6 @@ def handle_get_content():
     response = get(url, cookies=cookies, params=params)
     
     print(response.content)
-    with open("text.txt", 'w') as f:
-        f.write(response.content)
-    print("content saved in text.txt")
 
 def handle_reset_params():
     with open(PARAMS_FILE, 'w') as f:
