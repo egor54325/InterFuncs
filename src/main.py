@@ -45,7 +45,7 @@ def clear_and_show_logo_and_choices():
     console.print(Panel.fit(menu, title="Menu", width=console.width))
 
 def handle_ping():
-    ip = input("Enter the IP address: ")
+    ip = input("Enter the IP address (without https:// or http://): ")
     with console.status("Pinging...", spinner=CONFIG['spinner']):
         ping(ip)
 
