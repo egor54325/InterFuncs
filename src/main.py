@@ -11,8 +11,11 @@ console = Console()
 ping = lambda x: os.system(f"ping {x}")
 clear = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 ENTER_URL_TEXT = "Enter the URL: "
-COOKIES_FILE = "cookies.json"
-PARAMS_FILE = "params.json"
+COOKIES_FILE = "../config/cookies.json"
+PARAMS_FILE = "../config/params.json"
+CONFIG_FILE = "../config/config.json"
+with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+    CONFIG = json.load(f)
 
 print("loading cookies in file cookies.json and params in params.json")
 cookies = json.load(open(COOKIES_FILE))
@@ -43,18 +46,21 @@ def clear_and_show_logo_and_choices():
 
 def handle_ping():
     ip = input("Enter the IP address: ")
-    ping(ip)
+    with console.status("Pinging...", spinner=CONFIG['spinner']):
+        ping(ip)
 
 def handle_get_status_code():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
+    with console.status("Getting status code...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
     print(response.status_code)
 
 def handle_get_text():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
-    with open("text.txt", 'w', encoding='utf-8') as f:
-        f.write(response.text)
+    with console.status("Getting text...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
+        with open("text.txt", 'w', encoding='utf-8') as f:
+            f.write(response.text)
     print("text saved in text.txt")
     content_type = response.headers.get('Content-Type', '')
     if 'html' in content_type:
@@ -67,26 +73,30 @@ def handle_get_text():
 
 def handle_get_is_ok():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
+    with console.status("Checking is ok...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
     print(response.ok)
 
 def handle_get_headers():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
+    with console.status("Getting headers...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
     print(response.headers)
 
 def handle_get_json():
     url = input(ENTER_URL_TEXT)
     response = get(url, cookies=cookies, params=params)
     try:
-        json_data = response.json()
-        console.print(Syntax(json.dumps(json_data, indent=4), "json"))
+        with console.status("Getting json...", spinner=CONFIG['spinner']):
+            json_data = response.json()
+            console.print(Syntax(json.dumps(json_data, indent=4), "json"))
     except ValueError:
         console.print("[red]Error: Response is not in JSON format")
 
 def handle_check_site_availability():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
+    with console.status("Checking availability...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
     if response.status_code == 200:
         print("Site is available")
     else:
@@ -94,30 +104,35 @@ def handle_check_site_availability():
 
 def handle_get_content():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
-    
+    with console.status("Getting content...", spinner=CONFIG['spinner']):
+        response = get(url, cookies=cookies, params=params)
+        
     print(response.content)
 
 def handle_reset_params():
-    with open(PARAMS_FILE, 'w') as f:
-        f.write("{ }")
+    with console.status("Reseting params...", spinner=CONFIG['spinner']):
+        with open(PARAMS_FILE, 'w') as f:
+            f.write("{ }")
     print("params reseted")
 
 def handle_reset_cookies():
-    with open(COOKIES_FILE, 'w') as f:
-        f.write("{ }")
+    with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
+        with open(COOKIES_FILE, 'w') as f:
+            f.write("{ }")
     print("cookies reseted")
 
 def set_params():
     text_json = input("Enter the json: ")
-    with open(PARAMS_FILE, 'w') as f:
-        f.write(text_json)
+    with console.status("Writing params...", spinner=CONFIG['spinner']):
+        with open(PARAMS_FILE, 'w') as f:
+            f.write(text_json)
     print("params seted")
 
 def set_cookies():
     text_json = input("Enter the json: ")
-    with open(COOKIES_FILE, 'w') as f:
-        f.write(text_json)
+    with console.status("Writing cookies...", spinner=CONFIG['spinner']):
+        with open(COOKIES_FILE, 'w') as f:
+            f.write(text_json)
     print("cookies seted")
 
 def main():
