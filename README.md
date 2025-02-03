@@ -14,9 +14,9 @@ InterFuncs is a Python-based project designed to [briefly describe the purpose o
 To get started with InterFuncs, follow these steps:
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/egor54325/InterFuncs.git
-   ```
+```bash
+git clone https://github.com/egor54325/InterFuncs.git
+```
 2. Navigate to the project directory:
 ```bash
 cd InterFuncs
