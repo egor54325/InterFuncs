@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ```
 4. Move to the source directory:
 ```bash
-Move to the source directory:
+cd src
 ```
 
 ## Usage
