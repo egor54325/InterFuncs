@@ -1,10 +1,11 @@
 from art import text2art
 import os
-from requests import get
+import requests
 from rich.console import Console
 from rich.panel import Panel
 import json
 from rich.syntax import Syntax
+from bs4 import BeautifulSoup
 
 console = Console()
 
@@ -38,7 +39,8 @@ def clear_and_show_logo_and_choices():
         "10": "Reset params",
         "11": "Reset cookies",
         "12": "Set params",
-        "13": "Set cookies"
+        "13": "Set cookies",
+        "14": "Get css on site"
     }
     
     menu = "\n".join([f"{key}. {value}" for key, value in choices.items()])
@@ -52,17 +54,17 @@ def handle_ping():
 def handle_get_status_code():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting status code...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
     print(response.status_code)
 
 def handle_get_text():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting text...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
         with open("text.txt", 'w', encoding='utf-8') as f:
             f.write(response.text)
     print("text saved in text.txt")
-    content_type = response.headers.get('Content-Type', '')
+    content_type = response.headers.requests.get('Content-Type', '')
     if 'html' in content_type:
         lang = "html"
     elif 'json' in content_type:
@@ -74,18 +76,18 @@ def handle_get_text():
 def handle_get_is_ok():
     url = input(ENTER_URL_TEXT)
     with console.status("Checking is ok...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
     print(response.ok)
 
 def handle_get_headers():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting headers...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
     print(response.headers)
 
 def handle_get_json():
     url = input(ENTER_URL_TEXT)
-    response = get(url, cookies=cookies, params=params)
+    response = requests.get(url, cookies=cookies, params=params)
     try:
         with console.status("Getting json...", spinner=CONFIG['spinner']):
             json_data = response.json()
@@ -96,7 +98,7 @@ def handle_get_json():
 def handle_check_site_availability():
     url = input(ENTER_URL_TEXT)
     with console.status("Checking availability...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
     if response.status_code == 200:
         print("Site is available")
     else:
@@ -105,35 +107,47 @@ def handle_check_site_availability():
 def handle_get_content():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting content...", spinner=CONFIG['spinner']):
-        response = get(url, cookies=cookies, params=params)
+        response = requests.get(url, cookies=cookies, params=params)
         
     print(response.content)
 
-def handle_reset_params():
+def handle_rehandle_set_params():
     with console.status("Reseting params...", spinner=CONFIG['spinner']):
         with open(PARAMS_FILE, 'w') as f:
             f.write("{ }")
     print("params reseted")
 
-def handle_reset_cookies():
+def handle_rehandle_set_cookies():
     with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
         with open(COOKIES_FILE, 'w') as f:
             f.write("{ }")
     print("cookies reseted")
 
-def set_params():
+def handle_set_params():
     text_json = input("Enter the json: ")
     with console.status("Writing params...", spinner=CONFIG['spinner']):
         with open(PARAMS_FILE, 'w') as f:
             f.write(text_json)
     print("params seted")
 
-def set_cookies():
+def handle_set_cookies():
     text_json = input("Enter the json: ")
     with console.status("Writing cookies...", spinner=CONFIG['spinner']):
         with open(COOKIES_FILE, 'w') as f:
             f.write(text_json)
     print("cookies seted")
+def handle_get_css():
+    url = input(ENTER_URL_TEXT)
+    with console.status("Getting site", spinner=CONFIG['spinner']):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+    with console.status("Getting css links", spinner=CONFIG['spinner']):
+        css_links = [link['href'] for link in soup.find_all('link', rel='stylesheet')]
+    with console.status("Getting inline styles", spinner=CONFIG['spinner']):
+        inline_styles = [style.string for style in soup.find_all('style')]
+    
+    print(f"CSS files: {' '.join(css_links)}")
+    print(f"\nInline styles: {' '.join(inline_styles)}")
 
 def main():
     while True:
@@ -159,13 +173,15 @@ def main():
             elif cmd == "9":
                 handle_get_content()
             elif cmd == "10":
-                handle_reset_params()
+                handle_rehandle_set_params()
             elif cmd == "11":
-                handle_reset_cookies()
+                handle_rehandle_set_cookies()
             elif cmd == "12":
-                set_params()
+                handle_set_params()
             elif cmd == "13":
-                set_cookies()
+                handle_set_cookies()
+            elif cmd == "14":
+                handle_get_css()
             else:
                 console.print("[red]Error: Invalid command")
             print("Press enter to continue...")
