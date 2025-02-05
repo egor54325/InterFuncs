@@ -111,13 +111,13 @@ def handle_get_content():
         
     print(response.content)
 
-def handle_rehandle_set_params():
+def handle_set_params():
     with console.status("Reseting params...", spinner=CONFIG['spinner']):
         with open(PARAMS_FILE, 'w') as f:
             f.write("{ }")
     print("params reseted")
 
-def handle_rehandle_set_cookies():
+def handle_set_cookies():
     with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
         with open(COOKIES_FILE, 'w') as f:
             f.write("{ }")
@@ -136,6 +136,7 @@ def handle_set_cookies():
         with open(COOKIES_FILE, 'w') as f:
             f.write(text_json)
     print("cookies seted")
+
 def handle_get_css():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting site", spinner=CONFIG['spinner']):
@@ -173,9 +174,9 @@ def main():
             elif cmd == "9":
                 handle_get_content()
             elif cmd == "10":
-                handle_rehandle_set_params()
+                handle_set_params()
             elif cmd == "11":
-                handle_rehandle_set_cookies()
+                handle_set_cookies()
             elif cmd == "12":
                 handle_set_params()
             elif cmd == "13":
