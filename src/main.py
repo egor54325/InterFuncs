@@ -6,6 +6,7 @@ from rich.panel import Panel
 import json
 from rich.syntax import Syntax
 from bs4 import BeautifulSoup
+from rich.markdown import Markdown
 
 console = Console()
 
@@ -15,12 +16,12 @@ ENTER_URL_TEXT = "Enter the URL: "
 COOKIES_FILE = "../config/cookies.json"
 PARAMS_FILE = "../config/params.json"
 CONFIG_FILE = "../config/config.json"
-with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-    CONFIG = json.load(f)
+error = lambda e: console.print(f"Error: {e}", style="red")
 
-print("loading cookies in file cookies.json and params in params.json")
+print("loading cookies in file cookies.json, params in params.json and config in config.json")
 cookies = json.load(open(COOKIES_FILE))
 params = json.load(open(PARAMS_FILE))
+CONFIG = json.load(open(CONFIG_FILE))
 
 def clear_and_show_logo_and_choices():
     clear()
@@ -66,12 +67,13 @@ def handle_get_text():
     print("text saved in text.txt")
     content_type = response.headers.requests.get('Content-Type', '')
     if 'html' in content_type:
-        lang = "html"
+        console.print(Syntax(response.text, 'html'))
     elif 'json' in content_type:
-        lang = "json"
+        console.print(Syntax(response.text, 'json'))
+    elif 'markdown' in content_type:
+        console.print(Markdown(response.text))
     else:
-        lang = "text"
-    console.print(Syntax(response.text, lang))
+        console.print(response.text)
 
 def handle_get_is_ok():
     url = input(ENTER_URL_TEXT)
@@ -111,13 +113,13 @@ def handle_get_content():
         
     print(response.content)
 
-def handle_set_params():
+def handle_reset_params():
     with console.status("Reseting params...", spinner=CONFIG['spinner']):
         with open(PARAMS_FILE, 'w') as f:
             f.write("{ }")
     print("params reseted")
 
-def handle_set_cookies():
+def handle_reset_cookies():
     with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
         with open(COOKIES_FILE, 'w') as f:
             f.write("{ }")
@@ -145,52 +147,48 @@ def handle_get_css():
     with console.status("Getting css links", spinner=CONFIG['spinner']):
         css_links = [link['href'] for link in soup.find_all('link', rel='stylesheet')]
     with console.status("Getting inline styles", spinner=CONFIG['spinner']):
-        inline_styles = [style.string for style in soup.find_all('style')]
+        inline_styles = [style.string for style in soup.find_all('style') if style.string]
     
-    print(f"CSS files: {' '.join(css_links)}")
-    print(f"\nInline styles: {' '.join(inline_styles)}")
+    css_links_text = '\n'.join(css_links)
+    
+    print(f"CSS files: \n{css_links_text}")
+    if inline_styles:
+        console.print("Inline styles: \n" + Syntax('\n'.join(inline_styles), 'css'))
+    else:
+        print("No inline styles found.")
 
 def main():
     while True:
         clear_and_show_logo_and_choices()
         cmd = console.input("[green]>>> ")
         try:
-            if cmd == "1":
-                break
-            elif cmd == "2":
-                handle_ping()
-            elif cmd == "3":
-                handle_get_status_code()
-            elif cmd == "4":
-                handle_get_text()
-            elif cmd == "5":
-                handle_get_is_ok()
-            elif cmd == "6":
-                handle_get_headers()
-            elif cmd == "7":
-                handle_get_json()
-            elif cmd == "8":
-                handle_check_site_availability()
-            elif cmd == "9":
-                handle_get_content()
-            elif cmd == "10":
-                handle_set_params()
-            elif cmd == "11":
-                handle_set_cookies()
-            elif cmd == "12":
-                handle_set_params()
-            elif cmd == "13":
-                handle_set_cookies()
-            elif cmd == "14":
-                handle_get_css()
+            if cmd in commands:
+                commands[cmd]()
             else:
-                console.print("[red]Error: Invalid command")
+                error("Invaid command")
             print("Press enter to continue...")
             input()
         except Exception as e:
-            console.print(f"[red]Error: {e}")
+            error(e)
             print("Press enter to continue...")
             input()
+
+commands = {
+    "1": exit,
+    "2": handle_ping,
+    "3": handle_get_status_code,
+    "4": handle_get_text,
+    "5": handle_get_is_ok,
+    "6": handle_get_headers,
+    "7": handle_get_json,
+    "8": handle_check_site_availability,
+    "9": handle_get_content,
+    "10": handle_set_params,
+    "11": handle_set_cookies,
+    "12": handle_reset_params,
+    "13": handle_reset_cookies,
+    "14": handle_get_css
+}
 
 if __name__ == "__main__":
     clear()

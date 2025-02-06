@@ -2,4 +2,5 @@ art
 rich.console
 rich.panel
 rich.syntax
+rich.markdown
 bs4
