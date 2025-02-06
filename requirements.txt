@@ -1,6 +1,4 @@
 art
-rich.console
-rich.panel
-rich.syntax
-rich.markdown
+rich
 bs4
+PyExecJS

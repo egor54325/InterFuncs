@@ -7,6 +7,7 @@ import json
 from rich.syntax import Syntax
 from bs4 import BeautifulSoup
 from rich.markdown import Markdown
+import execjs
 
 console = Console()
 
@@ -23,6 +24,7 @@ cookies = json.load(open(COOKIES_FILE))
 params = json.load(open(PARAMS_FILE))
 CONFIG = json.load(open(CONFIG_FILE))
 
+
 def clear_and_show_logo_and_choices():
     clear()
     console.print("[red]" + text2art("InterFuncs"))
@@ -37,26 +39,30 @@ def clear_and_show_logo_and_choices():
         "7": "Get site json",
         "8": "Check site availability",
         "9": "Get site content",
-        "10": "Reset params",
-        "11": "Reset cookies",
-        "12": "Set params",
-        "13": "Set cookies",
-        "14": "Get css on site"
+        "10": "Set params",
+        "11": "Set cookies",
+        "12": "Reset params",
+        "13": "Reset cookies",
+        "14": "Get css on site",
+        "15": "Execute JavaScript code"
     }
     
     menu = "\n".join([f"{key}. {value}" for key, value in choices.items()])
     console.print(Panel.fit(menu, title="Menu", width=console.width))
+
 
 def handle_ping():
     ip = input("Enter the IP address (without https:// or http://): ")
     with console.status("Pinging...", spinner=CONFIG['spinner']):
         ping(ip)
 
+
 def handle_get_status_code():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting status code...", spinner=CONFIG['spinner']):
         response = requests.get(url, cookies=cookies, params=params)
     print(response.status_code)
+
 
 def handle_get_text():
     url = input(ENTER_URL_TEXT)
@@ -65,7 +71,7 @@ def handle_get_text():
         with open("text.txt", 'w', encoding='utf-8') as f:
             f.write(response.text)
     print("text saved in text.txt")
-    content_type = response.headers.requests.get('Content-Type', '')
+    content_type = response.headers.get('Content-Type', '')
     if 'html' in content_type:
         console.print(Syntax(response.text, 'html'))
     elif 'json' in content_type:
@@ -75,17 +81,20 @@ def handle_get_text():
     else:
         console.print(response.text)
 
+
 def handle_get_is_ok():
     url = input(ENTER_URL_TEXT)
     with console.status("Checking is ok...", spinner=CONFIG['spinner']):
         response = requests.get(url, cookies=cookies, params=params)
     print(response.ok)
 
+
 def handle_get_headers():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting headers...", spinner=CONFIG['spinner']):
         response = requests.get(url, cookies=cookies, params=params)
     print(response.headers)
+
 
 def handle_get_json():
     url = input(ENTER_URL_TEXT)
@@ -97,6 +106,7 @@ def handle_get_json():
     except ValueError:
         console.print("[red]Error: Response is not in JSON format")
 
+
 def handle_check_site_availability():
     url = input(ENTER_URL_TEXT)
     with console.status("Checking availability...", spinner=CONFIG['spinner']):
@@ -106,24 +116,13 @@ def handle_check_site_availability():
     else:
         print(f"Site is not available, status code: {response.status_code}")
 
+
 def handle_get_content():
     url = input(ENTER_URL_TEXT)
     with console.status("Getting content...", spinner=CONFIG['spinner']):
         response = requests.get(url, cookies=cookies, params=params)
-        
     print(response.content)
 
-def handle_reset_params():
-    with console.status("Reseting params...", spinner=CONFIG['spinner']):
-        with open(PARAMS_FILE, 'w') as f:
-            f.write("{ }")
-    print("params reseted")
-
-def handle_reset_cookies():
-    with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
-        with open(COOKIES_FILE, 'w') as f:
-            f.write("{ }")
-    print("cookies reseted")
 
 def handle_set_params():
     text_json = input("Enter the json: ")
@@ -132,12 +131,28 @@ def handle_set_params():
             f.write(text_json)
     print("params seted")
 
+
 def handle_set_cookies():
     text_json = input("Enter the json: ")
     with console.status("Writing cookies...", spinner=CONFIG['spinner']):
         with open(COOKIES_FILE, 'w') as f:
             f.write(text_json)
     print("cookies seted")
+
+
+def handle_reset_params():
+    with console.status("Reseting params...", spinner=CONFIG['spinner']):
+        with open(PARAMS_FILE, 'w') as f:
+            f.write("{ }")
+    print("params reseted")
+
+
+def handle_reset_cookies():
+    with console.status("Resetting cookies...", spinner=CONFIG['spinner']):
+        with open(COOKIES_FILE, 'w') as f:
+            f.write("{ }")
+    print("cookies reseted")
+
 
 def handle_get_css():
     url = input(ENTER_URL_TEXT)
@@ -157,6 +172,16 @@ def handle_get_css():
     else:
         print("No inline styles found.")
 
+
+def handle_execute_js():
+    code = input("Enter the JavaScript code: ")
+    try:
+        result = execjs.eval(code)
+        console.print(f"Result: {result}", style="green")
+    except Exception as e:
+        console.print(f"Error executing JavaScript: {e}", style="red")
+
+
 def main():
     while True:
         clear_and_show_logo_and_choices()
@@ -165,13 +190,14 @@ def main():
             if cmd in commands:
                 commands[cmd]()
             else:
-                error("Invaid command")
+                error("Invalid command")
             print("Press enter to continue...")
             input()
         except Exception as e:
             error(e)
             print("Press enter to continue...")
             input()
+
 
 commands = {
     "1": exit,
@@ -187,7 +213,8 @@ commands = {
     "11": handle_set_cookies,
     "12": handle_reset_params,
     "13": handle_reset_cookies,
-    "14": handle_get_css
+    "14": handle_get_css,
+    "15": handle_execute_js
 }
 
 if __name__ == "__main__":
