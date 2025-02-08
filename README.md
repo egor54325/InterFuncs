@@ -107,4 +107,4 @@ Additional documentation can be found [here](link_to_documentation) or within th
 
 ## License
 
-This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE.md) file.
