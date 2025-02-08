@@ -50,7 +50,6 @@ def clear_and_show_logo_and_choices():
     menu = "\n".join([f"{key}. {value}" for key, value in choices.items()])
     console.print(Panel.fit(menu, title="Menu", width=console.width))
 
-
 def handle_ping():
     ip = input("Enter the IP address (without https:// or http://): ")
     with console.status("Pinging...", spinner=CONFIG['spinner']):
