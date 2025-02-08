@@ -10,7 +10,6 @@ InterFuncs is a Python project designed to [explain functionality and use-cases 
 - [System Requirements](#system-requirements)
 - [Testing and CI/CD](#testing-and-cicd)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [Documentation](#documentation)
 - [License](#license)
 
@@ -78,32 +77,11 @@ In the `config` directory, there are configuration files:
 
 ## Troubleshooting
 
-If you encounter any issues during installation or execution, please refer to our [troubleshooting guide](link_here) for common problems and solutions.
-
-## Contributing
-
-To contribute to this project:
-
-1. Fork the repository.
-2. Create a new branch:
-    ```bash
-    git checkout -b feature-branch
-    ```
-3. Make your changes and commit them:
-    ```bash
-    git commit -m "Added a new feature"
-    ```
-4. Push your changes:
-    ```bash
-    git push origin feature-branch
-    ```
-5. Open a pull request for review.
-
-Please adhere to our [code of conduct](link_here) when contributing.
+If you encounter any issues during installation or execution, please refer to our [troubleshooting guide](Troubleshooting_guide.md) for common problems and solutions.
 
 ## Documentation
 
-Additional documentation can be found [here](link_to_documentation) or within the `docs` folder.
+Additional documentation can be found [here](doc.md) or within the `docs` folder.
 
 ## License
 
