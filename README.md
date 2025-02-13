@@ -10,7 +10,6 @@ InterFuncs is a Python project designed to [explain functionality and use-cases 
 - [System Requirements](#system-requirements)
 - [Testing and CI/CD](#testing-and-cicd)
 - [Troubleshooting](#troubleshooting)
-- [Documentation](#documentation)
 - [License](#license)
 
 ## Overview
