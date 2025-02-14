@@ -8,9 +8,6 @@ InterFuncs is a Python project designed to [explain functionality and use-cases 
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [System Requirements](#system-requirements)
-- [Testing and CI/CD](#testing-and-cicd)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ## Overview
 
@@ -69,19 +66,3 @@ In the `config` directory, there are configuration files:
       "param2": "value2"
   }
   ```
-
-## Testing and CI/CD
-
-[Provide details if the project includes tests, how to run them, and any information regarding CI/CD pipelines that are in place.]
-
-## Troubleshooting
-
-If you encounter any issues during installation or execution, please refer to our [troubleshooting guide](Troubleshooting_guide.md) for common problems and solutions.
-
-## Documentation
-
-Additional documentation can be found [here](doc.md) or within the `docs` folder.
-
-## License
-
-This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE.md) file.
